@@ -68,8 +68,11 @@ public class Board {
             }
             System.out.println();
         }
-    }
+    }  
 
+    public boolean isZero(int x, int y) {
+        return counts[x][y] == 0;
+    }
 
     public boolean isMine(int x, int y) {
         return mines[x][y];
