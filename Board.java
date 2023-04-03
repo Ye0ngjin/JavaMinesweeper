@@ -59,16 +59,7 @@ public class Board {
                     if (mines[x][y]) {
                         System.out.print("[*]");
                     } else {
-                        int count = 0;
-                        for (int dy = -1; dy <= 1; dy++) {
-                            for (int dx = -1; dx <= 1; dx++) {
-                                int nx = x + dx;
-                                int ny = y + dy;
-                                if (nx >= 0 && nx < width && ny >= 0 && ny < height && mines[nx][ny]) {
-                                    count++;
-                                }
-                            }
-                        }
+                        int count = counts[x][y];
                         System.out.print("["+count+"]");
                     }
                 } else {
@@ -78,6 +69,8 @@ public class Board {
             System.out.println();
         }
     }
+
+
     public boolean isMine(int x, int y) {
         return mines[x][y];
     }
