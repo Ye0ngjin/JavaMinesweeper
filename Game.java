@@ -1,6 +1,7 @@
 package minesweeper;
 
 import java.util.Arrays;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Game {
@@ -27,18 +28,39 @@ public class Game {
     }
 
     private void playOneTurn() {
-        System.out.print("x좌표를 입력하세요: ");
-        int x = scanner.nextInt() - 1;
-        System.out.print("y좌표를 입력하세요: ");
-        int y = scanner.nextInt() - 1;
+        int x = -1;
+        int y = -1;
+        while (x < 0 || x >= board.getWidth()) {
+            try {
+            	System.out.print("x좌표를 입력하세요: ");
+            	x = scanner.nextInt() - 1;;
+                if (x < 0 || x >= board.getWidth()) {
+                    System.out.println("유효하지 않은 좌표입니다. 다시 입력해주세요.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("숫자를 입력해주세요. 다시 입력해주세요.");
+                scanner.next();
+            }
+        }
         
-        select(x, y);
+        while (y < 0 || y >= board.getHeight()) {
+            try {
+            	System.out.print("y좌표를 입력하세요: ");
+            	y = scanner.nextInt() - 1;;
+                if ( y < 0 || y >= board.getHeight()) {
+                    System.out.println("유효하지 않은 좌표입니다. 다시 입력해주세요.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("숫자를 입력해주세요. 다시 입력해주세요.");
+                scanner.next();
+            }
+        }
+        
+        selectCheck(x, y);
     }
     
-    public void select(int x, int y) {
-        if (x < 0 || x >= board.getWidth() || y < 0 || y >= board.getHeight()) {
-            System.out.println("유효하지 않은 좌표입니다. 다시 입력해주세요.");
-        } else if (revealed[x][y]) {
+    private void selectCheck(int x, int y) {
+        if (revealed[x][y]) {
             System.out.println("이미 선택한 칸입니다. 다시 선택해주세요.");
         } else {
         	//선택한 칸으로 변경
@@ -58,7 +80,7 @@ public class Game {
     }
 
     // 선택한 칸의 좌표와 게임판 배열을 전달받아 해당 칸과 주변 칸을 선택하는 함수
-    public void selectZero(int x, int y) {
+    private void selectZero(int x, int y) {
     	//System.out.println("selectZero");
         // 선택한 칸이 count가 0이 아니면 종료
         if (!board.isZero(x, y)) {
