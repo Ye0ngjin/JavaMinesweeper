@@ -7,13 +7,16 @@ public class Board {
     private int height;
     private int mineCount;
     private boolean[][] mines;
+    private int[][] counts;
 
     public Board(int width, int height, int mineCount) {
         this.width = width;
         this.height = height;
         this.mineCount = mineCount;
         this.mines = new boolean[width][height];
+        this.counts = new int[width][height];
         generateMines();
+        generateCounts();
     }
 
     private void generateMines() {
@@ -29,12 +32,10 @@ public class Board {
         }
     }
 
-    public void print() {
+    private void generateCounts() {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                if (mines[x][y]) {
-                    System.out.print("*");
-                } else {
+                if (!mines[x][y]) {
                     int count = 0;
                     for (int dy = -1; dy <= 1; dy++) {
                         for (int dx = -1; dx <= 1; dx++) {
@@ -45,13 +46,38 @@ public class Board {
                             }
                         }
                     }
-                    System.out.print(count);
+                    counts[x][y] = count;
+                }
+            }
+        }
+    }
+
+    public void print(boolean[][] revealed) {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (revealed[x][y]) {
+                    if (mines[x][y]) {
+                        System.out.print("[*]");
+                    } else {
+                        int count = 0;
+                        for (int dy = -1; dy <= 1; dy++) {
+                            for (int dx = -1; dx <= 1; dx++) {
+                                int nx = x + dx;
+                                int ny = y + dy;
+                                if (nx >= 0 && nx < width && ny >= 0 && ny < height && mines[nx][ny]) {
+                                    count++;
+                                }
+                            }
+                        }
+                        System.out.print("["+count+"]");
+                    }
+                } else {
+                    System.out.print("[ ]");
                 }
             }
             System.out.println();
         }
     }
-
     public boolean isMine(int x, int y) {
         return mines[x][y];
     }

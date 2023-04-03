@@ -18,7 +18,7 @@ public class Game {
         System.out.println("게임을 시작합니다.");
 
         while (!gameover) {
-            board.print();
+            board.print(revealed);
             System.out.print("x좌표를 입력하세요: ");
             int x = scanner.nextInt();
             System.out.print("y좌표를 입력하세요: ");
