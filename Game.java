@@ -3,6 +3,7 @@ package minesweeper;
 import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class Game {
     private Board board;
@@ -20,43 +21,98 @@ public class Game {
         System.out.println("게임을 시작합니다.");
 
         while (!gameover) {
+        	board.printAll();
             board.print(revealed);
             playOneTurn();
         }
 
         System.out.println("게임이 종료되었습니다.");
     }
-
+    //수정할 것 - 전부 받고 받은 것이 숫자이면 x, y에 넣고
+    //아니면 "exit" - 종료, p - 깃발, o - 모두 열기(그냥 배열 출력으로 하자, 치트키 모드? 같은 걸로), c - 원래대로( o 가 켜 있는 상태에서만 동작 )
+    //나머지가 입력되면 "다시 입력해주세요" 출력
     private void playOneTurn() {
         int x = -1;
         int y = -1;
-        while (x < 0 || x >= board.getWidth()) {
-            try {
-            	System.out.print("x좌표를 입력하세요: ");
-            	x = scanner.nextInt() - 1;;
-                if (x < 0 || x >= board.getWidth()) {
-                    System.out.println("유효하지 않은 좌표입니다. 다시 입력해주세요.");
+
+//        while (true) {
+//            System.out.print("Input: ");
+//            String input = scanner.nextLine().toLowerCase();
+//
+//            if (input.equals("exit") || input.equals("종료")) {
+//                System.out.println("게임을 종료합니다.");
+//                break;
+//            } else if (input.equals("p") || input.equals("o") || input.equals("c")) {
+//                System.out.println("입력받은 키: " + input);
+//            } else {
+//                try {
+//                    Integer.parseInt(input);
+//                    System.out.println("Valid input: " + input);
+//                } catch (NumberFormatException e) {
+//                    System.out.println("Invalid input");
+//                }
+//            }
+//        }
+
+        System.out.println("종료-\"exit\" or \"종료\", 플래그 - \"p\", 배열보기 - \"o\", 배열닫기 - \"c\", 기본모드는 한칸 열기");
+        System.out.print("x좌표를 입력하세요: ");
+        String input = scanner.nextLine().toLowerCase();
+
+        switch (input) {
+        case "exit":
+        case "종료":
+        	gameover = true;
+        	System.out.println("게임을 종료합니다.");
+        	break;
+        case "p":
+        	break;
+        case "o":
+        	board.setOpen(true);
+        	break;
+        case "c":
+        	board.setOpen(false);
+        	break;
+        case "":
+        	System.out.println("공백");
+        	break;
+        default:
+        	if(!Pattern.matches("[0-9]+",input)) break;
+            while (x < 0 || x >= board.getWidth()) {
+                try {
+                	//System.out.print("x좌표를 입력하세요: ");
+                	x = Integer.parseInt(input) - 1;
+                	//System.out.println(x);
+                    if (x < 0 || x >= board.getWidth()) {
+                        System.out.println("유효하지 않은 좌표입니다. 다시 입력해주세요.");
+                        input = scanner.nextLine().toLowerCase();
+                        //System.out.println(input);
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("숫자를 입력해주세요. 다시 입력해주세요.");
+                    input = scanner.nextLine().toLowerCase();
+                    System.out.println(input);
+                    //scanner.next();
                 }
-            } catch (InputMismatchException e) {
-                System.out.println("숫자를 입력해주세요. 다시 입력해주세요.");
-                scanner.next();
             }
-        }
-        
-        while (y < 0 || y >= board.getHeight()) {
-            try {
-            	System.out.print("y좌표를 입력하세요: ");
-            	y = scanner.nextInt() - 1;;
-                if ( y < 0 || y >= board.getHeight()) {
-                    System.out.println("유효하지 않은 좌표입니다. 다시 입력해주세요.");
+            
+            while (y < 0 || y >= board.getHeight()) {
+                try {
+                	System.out.print("y좌표를 입력하세요: ");
+                	y = scanner.nextInt() - 1;
+                    if ( y < 0 || y >= board.getHeight()) {
+                        System.out.println("유효하지 않은 좌표입니다. 다시 입력해주세요.");
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.println("숫자를 입력해주세요. 다시 입력해주세요.");
+                    scanner.next();
                 }
-            } catch (InputMismatchException e) {
-                System.out.println("숫자를 입력해주세요. 다시 입력해주세요.");
-                scanner.next();
             }
+            if(scanner.hasNextLine()) {
+            	scanner.nextLine();
+            }
+            selectCheck(x, y);
         }
-        
-        selectCheck(x, y);
+
     }
     
     private void selectCheck(int x, int y) {
@@ -67,6 +123,7 @@ public class Game {
             revealed[x][y] = true;
             if (board.isMine(x, y)) {
                 System.out.println("지뢰를 밟았습니다. 게임오버!");
+                board.printAll();
                 board.print(revealed);
                 gameover = true;
                 revealAllTiles();

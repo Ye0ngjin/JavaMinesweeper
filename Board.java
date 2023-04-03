@@ -8,6 +8,7 @@ public class Board {
     private int mineCount;
     private boolean[][] mines;
     private int[][] counts;
+    private boolean open;
 
     public Board(int width, int height, int mineCount) {
         this.width = width;
@@ -15,6 +16,7 @@ public class Board {
         this.mineCount = mineCount;
         this.mines = new boolean[width][height];
         this.counts = new int[width][height];
+        this.open = false;
         generateMines();
         generateCounts();
     }
@@ -53,6 +55,7 @@ public class Board {
     }
 
     public void print(boolean[][] revealed) {
+    	//printAll();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if (revealed[x][y]) {
@@ -68,6 +71,26 @@ public class Board {
             }
             System.out.println();
         }
+    }  
+    
+    public void printAll() {
+    	if(!open) return;
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (true) {
+                    if (mines[x][y]) {
+                        System.out.print("[*]");
+                    } else {
+                        int count = counts[x][y];
+                        System.out.print("["+count+"]");
+                    }
+                }
+            }
+            System.out.println();
+        }
+        System.out.println();
+        System.out.println("--------------------------------");
+        System.out.println();
     }  
 
     public boolean isZero(int x, int y) {
@@ -85,4 +108,17 @@ public class Board {
     public int getWidth() {
         return width;
     }
+    
+    public boolean isOpen() {
+    	return open;
+    }
+    
+    public void setOpen(boolean bool) {
+    	if(bool) {
+    		open = true;
+    	}else {
+    		open = false;
+    	}
+    }
+    
 }
