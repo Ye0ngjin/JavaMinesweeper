@@ -6,19 +6,28 @@ public class Board {
     private int width;
     private int height;
     private int mineCount;
+    private int flagCount;
+    private int unrevealedCount;
     private boolean[][] mines;
     private int[][] counts;
-    private boolean open;
+    private boolean openMode;
+    private boolean flagMode;
+    private boolean[][] flags;
 
     public Board(int width, int height, int mineCount) {
         this.width = width;
         this.height = height;
         this.mineCount = mineCount;
+        this.flagCount = 0;
+        this.unrevealedCount = width*height;
         this.mines = new boolean[width][height];
         this.counts = new int[width][height];
-        this.open = false;
+        this.openMode = false;
+        this.flagMode = false;
+        this.flags = new boolean[width][height];
         generateMines();
         generateCounts();
+        generateFlags();
     }
 
     private void generateMines() {
@@ -53,9 +62,16 @@ public class Board {
             }
         }
     }
+    
+	private void generateFlags() {
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				flags[x][y] = false;
+			}
+		}
+	}
 
     public void print(boolean[][] revealed) {
-    	//printAll();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if (revealed[x][y]) {
@@ -66,7 +82,12 @@ public class Board {
                         System.out.print("["+count+"]");
                     }
                 } else {
-                    System.out.print("[ ]");
+                	if(flags[x][y]) {
+                		System.out.print("[F]");
+                	}else {
+                        System.out.print("[ ]");
+                	}
+
                 }
             }
             System.out.println();
@@ -74,7 +95,7 @@ public class Board {
     }  
     
     public void printAll() {
-    	if(!open) return;
+    	if(!openMode) return;
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if (true) {
@@ -90,7 +111,6 @@ public class Board {
         }
         System.out.println();
         System.out.println("--------------------------------");
-        System.out.println();
     }  
 
     public boolean isZero(int x, int y) {
@@ -109,16 +129,59 @@ public class Board {
         return width;
     }
     
-    public boolean isOpen() {
-    	return open;
+    public int getMineCount() {
+    	return mineCount;
     }
     
-    public void setOpen(boolean bool) {
+    public int getFlagCount() {
+    	return flagCount;
+    }
+    
+    public int getUnrevealedCount() {
+    	return unrevealedCount;
+    }
+    
+    public boolean isOpenMode() {
+    	return openMode;
+    }
+    
+    public void setOpenMode(boolean bool) {
     	if(bool) {
-    		open = true;
+    		openMode = true;
     	}else {
-    		open = false;
+    		openMode = false;
     	}
     }
     
+    public boolean isFlagMode() {
+    	return flagMode;
+    }
+    
+    public void setFlagMode(boolean bool) {
+    	if(bool) {
+    		flagMode = true;
+    	}else {
+    		flagMode = false;
+    	}
+    }
+    
+    public boolean isFlag(int x, int y) {
+        return flags[x][y];
+    }
+    
+	public void setFlags(int x, int y) {
+		flags[x][y] = !flags[x][y];
+	}
+    
+	public void addFlagCount() {
+		this.flagCount++;
+	}
+	
+	public void subFlagCount() {
+		this.flagCount--;
+	}
+	
+	public void subUnrevealedCount() {
+		this.unrevealedCount--;
+	}
 }

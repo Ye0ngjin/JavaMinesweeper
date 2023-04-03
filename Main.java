@@ -7,10 +7,6 @@ import java.util.InputMismatchException;
 
 처음에 선택한 부분이 지뢰이면 다시 배치하기
 
-모두 여는 키
-
-모두 닫는 키
-
 플래그 키*/
 public class Main {
     public static void main(String[] args) {
