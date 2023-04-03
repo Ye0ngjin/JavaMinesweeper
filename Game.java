@@ -62,13 +62,13 @@ public class Game {
     	//System.out.println("selectZero");
         // 선택한 칸이 count가 0이 아니면 종료
         if (!board.isZero(x, y)) {
-            changeRevealed(x, y);
+        	revealed[x][y] = true;
         	//System.out.println("0이 아님");
             return;
         }
         // 선택한 칸을 선택 상태로 변경
         //System.out.println("0 선택");
-        changeRevealed(x, y);
+        revealed[x][y] = true;
         // 8방향을 검사하며, count가 0인 칸이 있으면 해당 칸도 선택
         for (int i = x - 1; i <= x + 1; i++) {
             for (int j = y - 1; j <= y + 1; j++) {
@@ -91,11 +91,6 @@ public class Game {
         for (int i = 0; i < revealed.length; i++) {
             Arrays.fill(revealed[i], true);
         }
-    }
-    
-    public void changeRevealed(int x, int y) {
-        revealed[x][y] = true;
-        //System.out.println("선택한 칸으로 변경");
     }
     
 }
