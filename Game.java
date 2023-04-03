@@ -25,19 +25,15 @@ public class Game {
 			board.print(revealed);
 			playOneTurn();
 		}
-
 		System.out.println("게임이 종료되었습니다.");
 	}
-
-	// f - 깃발모드 만들기
-	// 첫번째로 입력한 곳이 폭탄이면 재배치후 열기
-	// 지뢰의 개수와 f의 개수와 열지않은 칸의 개수가 모두 같으면 승리! 표시후 게임 끝내기
 
 	private void playOneTurn() {
 		int x = -1;
 		int y = -1;
 
-		System.out.println("플래그: "+board.getFlagCount()+", "+"안열린 칸: "+board.getUnrevealedCount()+", "+"지뢰: "+board.getMineCount());
+		System.out.println("플래그: " + board.getFlagCount() + ", " + "안열린 칸: " + board.getUnrevealedCount() + ", "
+				+ "지뢰: " + board.getMineCount() + ", " + "가로: " + board.getWidth() + ", " + "세로: " + board.getHeight());
 		System.out.println("종료-\"exit\" or \"종료\", 플래그 - \"f\", 배열보기 - \"o\", 배열닫기 - \"c\", 기본모드는 한칸 열기");
 		if (board.isFlagMode()) {
 			System.out.println("깃발 모드 입니다. 깃발의 위치를 정하세요.");
@@ -62,6 +58,7 @@ public class Game {
 			break;
 		case "f":
 			if (board.getMineCount() < board.getFlagCount()) {
+				System.out.println("오류 발생: 깃발이 지뢰보다 많음");
 				break;
 			}
 			board.setFlagMode(true);
@@ -73,19 +70,14 @@ public class Game {
 			}
 			while (x < 0 || x >= board.getWidth()) {
 				try {
-					// System.out.print("x좌표를 입력하세요: ");
 					x = Integer.parseInt(input) - 1;
-					// System.out.println(x);
 					if (x < 0 || x >= board.getWidth()) {
 						System.out.println("유효하지 않은 좌표입니다. 다시 입력해주세요.");
 						input = scanner.nextLine().toLowerCase();
-						// System.out.println(input);
 					}
 				} catch (NumberFormatException e) {
 					System.out.println("숫자를 입력해주세요. 다시 입력해주세요.");
 					input = scanner.nextLine().toLowerCase();
-					// System.out.println(input);
-					// scanner.next();
 				}
 			}
 
@@ -101,7 +93,7 @@ public class Game {
 					scanner.next();
 				}
 			}
-			if (scanner.hasNextLine()) {
+			if (scanner.hasNextLine()) {// 공백 있으면 없애기
 				scanner.nextLine();
 			}
 			if (board.isFlagMode()) {
@@ -111,10 +103,10 @@ public class Game {
 				} else {// 열린 곳이 아닐 때
 					board.setFlags(x, y);
 					if (board.isFlag(x, y)) {
-						if(board.getMineCount() == board.getFlagCount()) {
-							board.setFlags(x, y);//플래그 카운트와 지뢰의 갯수가 같을 때, 깃발이 추가되면 취소시키기(이때는 깃발이 제거되는 것만 가능)
+						if (board.getMineCount() == board.getFlagCount()) {
+							board.setFlags(x, y);// 플래그 카운트와 지뢰의 갯수가 같을 때, 깃발이 추가되면 취소시키기(이때는 깃발이 제거되는 것만 가능)
 							System.out.println("깃발이 지뢰보다 많을 수 없습니다.");
-						}else {
+						} else {
 							board.addFlagCount();
 						}
 
@@ -123,10 +115,18 @@ public class Game {
 					}
 				}
 				board.setFlagMode(false);
-			} else {
+			} else {// 플래그 모드가 아닐 때
+				// 처음 누른 곳이 지뢰일 때
+				if (board.getUnrevealedCount() == board.getWidth() * board.getHeight()) {
+					while (board.isMine(x, y)) {// 처음 누른 곳이 지뢰가 아닐 때 까지 섞기
+						//System.out.println("섞기 시작");
+						board.reset();
+						//System.out.println("섞기 끝");
+					}
+				}
 				selectCheck(x, y);
 			}
-			isClear();			
+			isClear();// 승리 조건인지 확인하기
 		}
 	}
 
@@ -157,14 +157,11 @@ public class Game {
 		// 선택한 칸으로 변경
 		revealed[x][y] = true;
 		board.subUnrevealedCount();
-		// System.out.println("selectZero");
+
 		// 선택한 칸이 count가 0이 아니면 종료
 		if (!board.isZero(x, y)) {
-			// System.out.println("0이 아님");
 			return;
 		}
-		// 선택한 칸을 선택 상태로 변경
-		// System.out.println("0 선택");
 		// 8방향을 검사하며, count가 0인 칸이 있으면 해당 칸도 선택
 		for (int i = x - 1; i <= x + 1; i++) {
 			for (int j = y - 1; j <= y + 1; j++) {
@@ -191,9 +188,9 @@ public class Game {
 			Arrays.fill(revealed[i], true);
 		}
 	}
-	
+
 	private void isClear() {
-		if(board.getFlagCount() == board.getUnrevealedCount()) {
+		if (board.getFlagCount() == board.getUnrevealedCount()) {
 			board.print(revealed);
 			System.out.println("승리!");
 			gameover = true;

@@ -30,6 +30,13 @@ public class Board {
         generateFlags();
     }
 
+    public void reset() {
+    	mines = new boolean[width][height];
+    	counts = new int[width][height];
+    	generateMines();
+    	generateCounts();
+    }
+    
     private void generateMines() {
         Random random = new Random();
         int count = 0;
